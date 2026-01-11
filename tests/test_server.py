@@ -3,12 +3,12 @@ import respx
 from httpx import Response
 
 from version_mcp.server import (
-    lookup_pypi,
-    lookup_npm,
-    lookup_crates,
-    lookup_go,
     call_tool,
     list_tools,
+    lookup_crates,
+    lookup_go,
+    lookup_npm,
+    lookup_pypi,
 )
 
 
@@ -75,9 +75,7 @@ class TestLookupPypi:
     @respx.mock
     @pytest.mark.asyncio
     async def test_successful_lookup(self, pypi_response):
-        respx.get("https://pypi.org/pypi/flask/json").mock(
-            return_value=Response(200, json=pypi_response)
-        )
+        respx.get("https://pypi.org/pypi/flask/json").mock(return_value=Response(200, json=pypi_response))
 
         result = await lookup_pypi("flask")
 
@@ -89,9 +87,7 @@ class TestLookupPypi:
     @respx.mock
     @pytest.mark.asyncio
     async def test_package_not_found(self):
-        respx.get("https://pypi.org/pypi/nonexistent-package-xyz/json").mock(
-            return_value=Response(404)
-        )
+        respx.get("https://pypi.org/pypi/nonexistent-package-xyz/json").mock(return_value=Response(404))
 
         result = await lookup_pypi("nonexistent-package-xyz")
 
@@ -103,9 +99,7 @@ class TestLookupNpm:
     @respx.mock
     @pytest.mark.asyncio
     async def test_successful_lookup(self, npm_response):
-        respx.get("https://registry.npmjs.org/express").mock(
-            return_value=Response(200, json=npm_response)
-        )
+        respx.get("https://registry.npmjs.org/express").mock(return_value=Response(200, json=npm_response))
 
         result = await lookup_npm("express")
 
@@ -116,9 +110,7 @@ class TestLookupNpm:
     @respx.mock
     @pytest.mark.asyncio
     async def test_package_not_found(self):
-        respx.get("https://registry.npmjs.org/nonexistent-package-xyz").mock(
-            return_value=Response(404)
-        )
+        respx.get("https://registry.npmjs.org/nonexistent-package-xyz").mock(return_value=Response(404))
 
         result = await lookup_npm("nonexistent-package-xyz")
 
@@ -130,9 +122,7 @@ class TestLookupCrates:
     @respx.mock
     @pytest.mark.asyncio
     async def test_successful_lookup(self, crates_response):
-        respx.get("https://crates.io/api/v1/crates/serde").mock(
-            return_value=Response(200, json=crates_response)
-        )
+        respx.get("https://crates.io/api/v1/crates/serde").mock(return_value=Response(200, json=crates_response))
 
         result = await lookup_crates("serde")
 
@@ -143,9 +133,7 @@ class TestLookupCrates:
     @respx.mock
     @pytest.mark.asyncio
     async def test_package_not_found(self):
-        respx.get("https://crates.io/api/v1/crates/nonexistent-crate-xyz").mock(
-            return_value=Response(404)
-        )
+        respx.get("https://crates.io/api/v1/crates/nonexistent-crate-xyz").mock(return_value=Response(404))
 
         result = await lookup_crates("nonexistent-crate-xyz")
 
@@ -172,9 +160,7 @@ class TestLookupGo:
     @respx.mock
     @pytest.mark.asyncio
     async def test_module_not_found(self):
-        respx.get("https://proxy.golang.org/github.com/nonexistent/module/@latest").mock(
-            return_value=Response(404)
-        )
+        respx.get("https://proxy.golang.org/github.com/nonexistent/module/@latest").mock(return_value=Response(404))
 
         result = await lookup_go("github.com/nonexistent/module")
 
@@ -186,9 +172,7 @@ class TestCallTool:
     @respx.mock
     @pytest.mark.asyncio
     async def test_call_pypi_tool(self, pypi_response):
-        respx.get("https://pypi.org/pypi/flask/json").mock(
-            return_value=Response(200, json=pypi_response)
-        )
+        respx.get("https://pypi.org/pypi/flask/json").mock(return_value=Response(200, json=pypi_response))
 
         result = await call_tool("lookup_pypi", {"package_name": "flask"})
 

@@ -3,7 +3,7 @@
 import httpx
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Tool, TextContent
+from mcp.types import TextContent, Tool
 
 server = Server("version-mcp")
 
@@ -22,7 +22,11 @@ async def lookup_pypi(package_name: str) -> dict:
 
         info = data["info"]
         releases = list(data["releases"].keys())
-        releases_sorted = sorted(releases, key=lambda v: data["releases"][v][0]["upload_time"] if data["releases"][v] else "", reverse=True)
+
+        def get_upload_time(v: str) -> str:
+            return data["releases"][v][0]["upload_time"] if data["releases"][v] else ""
+
+        releases_sorted = sorted(releases, key=get_upload_time, reverse=True)
 
         return {
             "name": info["name"],
@@ -121,13 +125,16 @@ async def list_tools() -> list[Tool]:
     return [
         Tool(
             name="lookup_pypi",
-            description="Look up Python package versions on PyPI. Use this to find the latest version and recent releases of Python packages.",
+            description=(
+                "Look up Python package versions on PyPI. "
+                "Use this to find the latest version and recent releases of Python packages."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
                     "package_name": {
                         "type": "string",
-                        "description": "The name of the Python package to look up (e.g., 'requests', 'django', 'numpy')",
+                        "description": "The Python package name (e.g., 'requests', 'django')",
                     }
                 },
                 "required": ["package_name"],
@@ -135,13 +142,16 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="lookup_npm",
-            description="Look up JavaScript/Node.js package versions on npm. Use this to find the latest version and recent releases of npm packages.",
+            description=(
+                "Look up JavaScript/Node.js package versions on npm. "
+                "Use this to find the latest version and recent releases of npm packages."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
                     "package_name": {
                         "type": "string",
-                        "description": "The name of the npm package to look up (e.g., 'react', 'express', 'typescript')",
+                        "description": "The npm package name (e.g., 'react', 'express')",
                     }
                 },
                 "required": ["package_name"],
@@ -149,13 +159,16 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="lookup_crates",
-            description="Look up Rust crate versions on crates.io. Use this to find the latest version and recent releases of Rust crates.",
+            description=(
+                "Look up Rust crate versions on crates.io. "
+                "Use this to find the latest version and recent releases of Rust crates."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
                     "package_name": {
                         "type": "string",
-                        "description": "The name of the Rust crate to look up (e.g., 'serde', 'tokio', 'reqwest')",
+                        "description": "The Rust crate name (e.g., 'serde', 'tokio')",
                     }
                 },
                 "required": ["package_name"],
@@ -163,13 +176,16 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="lookup_go",
-            description="Look up Go module versions on the Go module proxy. Use this to find the latest version and recent releases of Go modules.",
+            description=(
+                "Look up Go module versions on the Go module proxy. "
+                "Use this to find the latest version and recent releases of Go modules."
+            ),
             inputSchema={
                 "type": "object",
                 "properties": {
                     "module_path": {
                         "type": "string",
-                        "description": "The Go module path to look up (e.g., 'github.com/gin-gonic/gin', 'golang.org/x/sync')",
+                        "description": "The Go module path (e.g., 'github.com/gin-gonic/gin')",
                     }
                 },
                 "required": ["module_path"],
@@ -230,6 +246,7 @@ async def run():
 def main():
     """Entry point."""
     import asyncio
+
     asyncio.run(run())
 
 
