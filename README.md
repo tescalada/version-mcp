@@ -11,16 +11,8 @@ MCP server for looking up package versions from various package managers.
 
 ## Usage with Claude Code
 
-From git:
-
 ```bash
-claude mcp add version-mcp -- uvx --from git+https://github.com/tescalada/version-mcp version-mcp
-```
-
-From local checkout:
-
-```bash
-claude mcp add version-mcp -- uv run --directory /path/to/version_mcp version-mcp
+claude mcp add version-mcp -- uvx version-mcp
 ```
 
 ## Development
@@ -29,4 +21,11 @@ Run tests:
 
 ```bash
 uv run --extra dev pytest -v
+```
+
+Lint/format:
+
+```bash
+uv run --extra dev ruff check .
+uv run --extra dev ruff format .
 ```
